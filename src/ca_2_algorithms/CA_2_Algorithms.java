@@ -41,11 +41,10 @@ public class CA_2_Algorithms {
         public String toString(){
             return firstName + " " + lastName + " | " + managerType + " | " + department;
         }
-   
     }
 
   //ENUM-MENU OPTION
-    //----------------
+    //--------------
     enum MenuOption {
         DISPLAY_FIRST_20(1, "Display first 20 employees (sorted by first name)"),
         SEARCH_BY_NAME(2, "Search employee by First Name"),
@@ -76,7 +75,7 @@ public class CA_2_Algorithms {
 
     
     // MAIN MENU SECTION
-    // ---------
+    // -----------------
     public static void main(String[] args) {
 
         List<Employee> employees = new ArrayList<>();      // Holds employees loaded from file
@@ -84,8 +83,71 @@ public class CA_2_Algorithms {
         Set<String> departments = new LinkedHashSet<>();   // Stores unique departments
         Set<String> managerTypes = new LinkedHashSet<>();  // Stores unique manager types
         
-    
-    }    
+    // Load employees from file into memory
+        if (!getEmployeesFromFile(FILE_NAME, employees, departments, managerTypes)) {
+            System.out.println("Error: Could not load employees. Exiting.");
+            return; // Stop program if file read fails
+        }
+
+        // Sort employees alphabetically using merge sort
+        sortEmployees(employees);
+
+        Scanner scanner = new Scanner(System.in); // Scanner for user input
+        boolean running = true;                   // Loop control variable
+
+        // MAIN MENU LOOP – continues until user selects Exit
+        // --------------------------------------------------
+        while (running) {
+            System.out.println("=== MAIN MENU ==="); // Display header
+
+            // Loop through enum to print menu lines
+            for (MenuOption option : MenuOption.values()) {
+                System.out.println(option.code + ". " + option.description); // Print lines like: 1. Display first 20 employees
+            }
+            System.out.print("Choose an option: ");
+
+            int choice;
+            try {
+                choice = Integer.parseInt(scanner.nextLine()); // Convert user input to integer
+            } catch (Exception e) {
+                System.out.println("Invalid input."); // Detect non-numeric input
+                continue; // Restart menu loop
+            }
+
+            MenuOption selected = MenuOption.fromCode(choice); // Match numeric input to enum
+            if (selected == null) { // If invalid menu selection
+                System.out.println("Invalid menu option.");
+                continue;
+            }
+
+            // Execute appropriate action based on menu selection
+            switch (selected) {
+                case DISPLAY_FIRST_20:
+                    displayFirst20(employees); // Display first 20 employees
+                    break;
+
+                case SEARCH_BY_NAME:
+                    handleSearch(employees, scanner); // Bianry search
+                    break;
+
+                case ADD_EMPLOYEE:
+                    handleAddEmployee(employees, newlyAdded, departments, managerTypes, scanner); // Add new employee
+                    sortEmployees(employees); // Re-sort list after adding
+                    break;
+
+                case SHOW_HIERARCHY:
+                    handleHierarchy(employees); // Display binary tree structure
+                    break;
+
+                case EXIT:
+                    running = false; // End loop
+                    System.out.println("Goodbye!"); // Exit message
+                    break;
+            }
+        }
+
+        scanner.close(); // Close scanner at end of program
+    }
         
     //READING FILE - from .txt file (downloaded from Moodle)
     //-----------------------------------------------------
@@ -126,4 +188,5 @@ public class CA_2_Algorithms {
             return false; // File read failed
         }    
 }
+    
 }
