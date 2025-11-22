@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Scanner;
@@ -98,7 +99,7 @@ public class CA_2_Algorithms {
         // MAIN MENU LOOP – continues until user selects Exit
         // --------------------------------------------------
         while (running) {
-            System.out.println("=== MAIN MENU ==="); // Display header
+            System.out.println("***** MAIN MENU *****"); // Display header
 
             // Loop through enum to print menu lines
             for (MenuOption option : MenuOption.values()) {
@@ -188,5 +189,64 @@ public class CA_2_Algorithms {
             return false; // File read failed
         }    
 }
-    
+ 
+    // MERGE SORT – sorted by firstName
+    // ----------------------------------------------
+    private static void sortEmployees(List<Employee> employees) {
+        Employee[] arr = employees.toArray(new Employee[0]);   // Convert list to array
+        mergeSort(arr, 0, arr.length - 1);                     // Call recursive merge sort
+        employees.clear();                                     // Clear original list
+        employees.addAll(Arrays.asList(arr));                  // Add sorted items back
+    }
+
+    //  Merge sort
+    private static void mergeSort(Employee[] arr, int left, int right) {
+        if (left < right) {   // Condition
+            int mid = (left + right) / 2;    // Find middle
+
+            mergeSort(arr, left, mid);       // Sorting left side
+            mergeSort(arr, mid + 1, right);  // Sorting right side
+
+            merge(arr, left, mid, right);    // Merge both sides
+        }
+    }
+
+    // Merge function combines two sorted sides
+    private static void merge(Employee[] arr, int left, int mid, int right) {
+
+        int n1 = mid - left + 1;  // Size of left side
+        int n2 = right - mid;     // Size of right side
+
+        Employee[] L = new Employee[n1];   // Temporary array for left side
+        Employee[] R = new Employee[n2];   // Temporary array for right side
+
+        // Copy data into temporary arrays
+        for (int i = 0; i < n1; i++) L[i] = arr[left + i];
+        for (int j = 0; j < n2; j++) R[j] = arr[mid + 1 + j];
+
+        int i = 0, j = 0, k = left; // Index variables
+
+        // Merge elements in correct alphabetical order
+        while (i < n1 && j < n2) {
+            if (L[i].firstName.compareToIgnoreCase(R[j].firstName) <= 0)
+                arr[k++] = L[i++]; // Left item comes first
+            else
+                arr[k++] = R[j++]; // Right item comes first
+        }
+
+        // Copy remaining elements
+        while (i < n1) arr[k++] = L[i++];
+        while (j < n2) arr[k++] = R[j++];
+    }
+
+    // DISPLAY FIRST 20 EMPLOYEES (Sorted)- Task 1 of Assignment
+    // ---------------------------------------------------------
+    private static void displayFirst20(List<Employee> employees) {
+        System.out.println("***** FIRST 20 EMPLOYEES *****");
+
+        int limit = Math.min(20, employees.size()); // Minimum 20 employees
+        for (int i = 0; i < limit; i++) {
+            System.out.println((i + 1) + ". " + employees.get(i)); // Print numbered list
+        }
+    }  
 }
