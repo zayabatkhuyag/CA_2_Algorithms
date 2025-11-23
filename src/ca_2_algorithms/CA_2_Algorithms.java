@@ -58,13 +58,13 @@ public class CA_2_Algorithms {
         
         // Constructor for each enum item
         MenuOption(int code, String description) {
-            this.code = code;               // assign code
-            this.description = description; // assign description
+            this.code = code;               //assign code
+            this.description = description; //assign description
         }
 
         // Converts user numeric input into the corresponding enum option
         static MenuOption fromCode(int code) {
-            for (MenuOption option : values()) { // Loop through all menu options
+            for (MenuOption option : values()) {  //loop through all menu options
                 if (option.code == code) return option; // Return match
             }
             return null; // If invalid option
@@ -79,43 +79,44 @@ public class CA_2_Algorithms {
     // -----------------
     public static void main(String[] args) {
 
-        List<Employee> employees = new ArrayList<>();      // Holds employees loaded from file
-        List<Employee> newlyAdded = new ArrayList<>();     // Holds employees added during runtime
-        Set<String> departments = new LinkedHashSet<>();   // Stores unique departments
-        Set<String> managerTypes = new LinkedHashSet<>();  // Stores unique manager types
+        List<Employee> employees = new ArrayList<>();      //holds employees loaded from file
+        List<Employee> newlyAdded = new ArrayList<>();     //holds employees added during runtime
+        Set<String> departments = new LinkedHashSet<>();   //stores unique departments
+        Set<String> managerTypes = new LinkedHashSet<>();  //stores unique manager types
         
-    // Load employees from file into memory
+        // Load employees from file into memory
         if (!getEmployeesFromFile(FILE_NAME, employees, departments, managerTypes)) {
             System.out.println("Error: Could not load employees. Exiting.");
-            return; // Stop program if file read fails
+            return; // stop program if file read fails
         }
 
         // Sort employees alphabetically using merge sort
         sortEmployees(employees);
 
-        Scanner scanner = new Scanner(System.in); // Scanner for user input
-        boolean running = true;                   // Loop control variable
+        Scanner scanner = new Scanner(System.in);    //scanner for user input
+        boolean running = true;                      //loop control variable
 
+        
         // MAIN MENU LOOP – continues until user selects Exit
         // --------------------------------------------------
         while (running) {
-            System.out.println("***** MAIN MENU *****"); // Display header
+            System.out.println("***** MAIN MENU *****");   //header
 
             // Loop through enum to print menu lines
             for (MenuOption option : MenuOption.values()) {
-                System.out.println(option.code + ". " + option.description); // Print lines like: 1. Display first 20 employees
+                System.out.println(option.code + ". " + option.description);   //print lines like: 1. Display first 20 employees
             }
             System.out.print("Choose an option: ");
 
             int choice;
             try {
-                choice = Integer.parseInt(scanner.nextLine()); // Convert user input to integer
+                choice = Integer.parseInt(scanner.nextLine());    //convert user input to integer
             } catch (Exception e) {
-                System.out.println("Invalid input."); // Detect non-numeric input
+                System.out.println("Invalid input.");   // find non-numeric input
                 continue; // Restart menu loop
             }
 
-            MenuOption selected = MenuOption.fromCode(choice); // Match numeric input to enum
+            MenuOption selected = MenuOption.fromCode(choice);   //match numeric input to enum
             if (selected == null) { // If invalid menu selection
                 System.out.println("Invalid menu option.");
                 continue;
@@ -124,47 +125,47 @@ public class CA_2_Algorithms {
             // Execute appropriate action based on menu selection
             switch (selected) {
                 case DISPLAY_FIRST_20:
-                    displayFirst20(employees); // Display first 20 employees
+                    displayFirst20(employees);   //Display first 20 employees
                     break;
 
                 case SEARCH_BY_NAME:
-                    handleSearch(employees, scanner); // Bianry search
+                    handleSearch(employees, scanner);    //Bianry search
                     break;
 
                 case ADD_EMPLOYEE:
                     handleAddEmployee(employees, newlyAdded, departments, managerTypes, scanner); // Add new employee
-                    sortEmployees(employees); // Re-sort list after adding
+                    sortEmployees(employees);  //Re-sort list after adding
                     break;
 
                 case SHOW_HIERARCHY:
-                    handleHierarchy(employees); // Display binary tree structure
+                    handleHierarchy(employees);   //Display binary tree structure
                     break;
 
                 case EXIT:
-                    running = false; // End loop
-                    System.out.println("Goodbye!"); // Exit message
+                    running = false;   //end of loop
+                    System.out.println("Goodbye!");   //Exit 
                     break;
             }
         }
 
-        scanner.close(); // Close scanner at end of program
+        scanner.close();   //close scanner at end of program
     }
         
     //READING FILE - from .txt file (downloaded from Moodle)
     //-----------------------------------------------------
     private static boolean getEmployeesFromFile(String FILE_NAME, List<Employee> employees, Set<String> departments, Set<String> managerTypes){
-        try (BufferedReader br = new BufferedReader(new FileReader(FILE_NAME))) { // Open reader
+        try (BufferedReader br = new BufferedReader(new FileReader(FILE_NAME))) {   //open reader
 
-            String line = br.readLine(); // Read header line and ignore
+            String line = br.readLine();   //read header line and ignore
 
             // Read each line until file ends
             while ((line = br.readLine()) != null) {
 
-                if (line.trim().isEmpty()) continue; // Skip blank lines
+                if (line.trim().isEmpty()) continue;   //skip blank lines
 
-                String[] parts = line.split(","); // Split values
+                String[] parts = line.split(",");    //split values
 
-                if (parts.length < 9) continue; // Making sure 9 rows exist
+                if (parts.length < 9) continue;     //making sure 9 rows exist
 
                 // Extract specific data fields
                 String firstName = parts[0].trim();
@@ -185,53 +186,53 @@ public class CA_2_Algorithms {
             return true; // File read successfully
 
         } catch (IOException e) {
-            System.out.println("File Load Error: " + e.getMessage()); // Print reason for failure
-            return false; // File read failed
+            System.out.println("File Load Error: " + e.getMessage());   //print reason for failure
+            return false;    //file read failed
         }    
 }
  
     // MERGE SORT – sorted by firstName
     // ----------------------------------------------
     private static void sortEmployees(List<Employee> employees) {
-        Employee[] arr = employees.toArray(new Employee[0]);   // Convert list to array
-        mergeSort(arr, 0, arr.length - 1);                     // Call recursive merge sort
-        employees.clear();                                     // Clear original list
-        employees.addAll(Arrays.asList(arr));                  // Add sorted items back
+        Employee[] arr = employees.toArray(new Employee[0]);   //convert list to array
+        mergeSort(arr, 0, arr.length - 1);                     //call recursive merge sort
+        employees.clear();                                     //clear original list
+        employees.addAll(Arrays.asList(arr));                  //add sorted items back
     }
 
     //  Merge sort
     private static void mergeSort(Employee[] arr, int left, int right) {
         if (left < right) {   // Condition
-            int mid = (left + right) / 2;    // Find middle
+            int mid = (left + right) / 2;    //find middle
 
-            mergeSort(arr, left, mid);       // Sorting left side
-            mergeSort(arr, mid + 1, right);  // Sorting right side
+            mergeSort(arr, left, mid);       //sorting left side
+            mergeSort(arr, mid + 1, right);  //sorting right side
 
-            merge(arr, left, mid, right);    // Merge both sides
+            merge(arr, left, mid, right);    //merge both sides
         }
     }
 
     // Merge function combines two sorted sides
     private static void merge(Employee[] arr, int left, int mid, int right) {
 
-        int n1 = mid - left + 1;  // Size of left side
-        int n2 = right - mid;     // Size of right side
+        int n1 = mid - left + 1;   //size of left side
+        int n2 = right - mid;      //size of right side
 
-        Employee[] L = new Employee[n1];   // Temporary array for left side
-        Employee[] R = new Employee[n2];   // Temporary array for right side
+        Employee[] L = new Employee[n1];   //temporary array for left side
+        Employee[] R = new Employee[n2];   //temporary array for right side
 
-        // Copy data into temporary arrays
+        //Copy data into temporary arrays
         for (int i = 0; i < n1; i++) L[i] = arr[left + i];
         for (int j = 0; j < n2; j++) R[j] = arr[mid + 1 + j];
 
-        int i = 0, j = 0, k = left; // Index variables
+        int i = 0, j = 0, k = left;   //index variables
 
         // Merge elements in correct alphabetical order
         while (i < n1 && j < n2) {
             if (L[i].firstName.compareToIgnoreCase(R[j].firstName) <= 0)
-                arr[k++] = L[i++]; // Left item comes first
+                arr[k++] = L[i++];   //left item comes first
             else
-                arr[k++] = R[j++]; // Right item comes first
+                arr[k++] = R[j++];   //right item comes first
         }
 
         // Copy remaining elements
@@ -244,9 +245,43 @@ public class CA_2_Algorithms {
     private static void displayFirst20(List<Employee> employees) {
         System.out.println("***** FIRST 20 EMPLOYEES *****");
 
-        int limit = Math.min(20, employees.size()); // Minimum 20 employees
+        int limit = Math.min(20, employees.size());     //minimum 20 employees
         for (int i = 0; i < limit; i++) {
-            System.out.println((i + 1) + ". " + employees.get(i)); // Print numbered list
+            System.out.println((i + 1) + ". " + employees.get(i));   //print numbered list
         }
-    }  
+    }
+   
+    // BINARY SEARCH – search employee by first name
+    // ---------------------------------------------
+    private static int binarySearchByFirstName(Employee[] arr, String name) {
+
+        int left = 0, right = arr.length - 1;   //start and end indices
+
+        while (left <= right) {    //will search until section is empty
+
+            int mid = (left + right) / 2;    // finding middle 
+            int cmp = name.compareToIgnoreCase(arr[mid].firstName);    //compare names
+
+            if (cmp == 0) return mid;        //match found
+            if (cmp < 0) right = mid - 1;    //search left side
+            else left = mid + 1;             //search right side
+        }
+
+        return -1;   //naame not found
+    }
+
+    // Handle search menu option
+    private static void handleSearch(List<Employee> employees, Scanner scanner) {
+
+        System.out.print("Enter FIRST name: ");
+        String name = scanner.nextLine().trim();     //read name
+
+        Employee[] arr = employees.toArray(new Employee[0]);    //convert list to array
+        int index = binarySearchByFirstName(arr, name);         //search for name
+
+        if (index != -1)
+            System.out.println("FOUND: " + arr[index]);          //print found record
+        else
+            System.out.println("NOT FOUND.");                    //not found
+    }
 }
